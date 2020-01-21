@@ -11,7 +11,7 @@ namespace Scheduler
         private DateTime creationDate;
 
         public string Name { get; set; }
-        public DateTime CreationDate { get; }
+        public DateTime CreationDate { get { return creationDate; } }
         public DateTime CompletionDate { get; set; }
 
         public Task(string Name, DateTime CompletionDate)

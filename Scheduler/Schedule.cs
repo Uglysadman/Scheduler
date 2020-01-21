@@ -10,6 +10,11 @@ namespace Scheduler
     {
         public List<Task> Tasks { get; set; }
 
+        public Schedule()
+        {
+            this.Tasks = new List<Task>();
+        }
+
         public void AddTask(string nameTask, DateTime completionDate)
         {
             Tasks.Add(new Task(nameTask, completionDate));
@@ -46,6 +51,16 @@ namespace Scheduler
                 task.Name = newTask.Name;
                 task.CompletionDate = newTask.CompletionDate;
             }
+        }
+
+        public void SortTasksByCreationDate()
+        {
+            
+        }
+
+        public void SortTasksByCompletionDate()
+        {
+
         }
 
         public string PrintTasksList()
