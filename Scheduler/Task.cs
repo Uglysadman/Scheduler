@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Scheduler
 {
+    [Serializable]
     class Task
     {
         private DateTime creationDate;

@@ -1,17 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 
 
+
 namespace Scheduler
 {
+    /// <summary>
+    /// 
+    /// </summary>
     class Program
     {
+        static Schedule schedule = new Schedule();
+
+        static bool CheckTasksExist(Schedule schedule)
+        {
+            if (schedule.Tasks.Count == 0)
+            {
+                Console.WriteLine("Такой команды нет !");
+                WaitInteraction();
+                return false;
+            }
+            return true;
+        }
+
+        static void WaitInteraction()
+        {
+            Console.WriteLine("Для продолжения нажмите любую клавишу ...");
+            Console.ReadKey();
+            Console.Clear();
+        }
+
         static void Main(string[] args)
         {
-            Schedule schedule = new Schedule();
             while (true)
             {
                 Console.WriteLine("1 - Добавить задание в расписание");
@@ -22,10 +47,12 @@ namespace Scheduler
                     Console.WriteLine("4 - Отобразить расписание");
                     Console.WriteLine("5 - Сортировать расписание по дате добавления");
                     Console.WriteLine("6 - Сортировать расписание по дате завершения задания");
-                    Console.WriteLine("7 - Сохранить в расписание в файл");
+                    Console.WriteLine("7 - Отобразить список текущих дел");
+                    Console.WriteLine("8 - Отобразить список просроченных дел");
+                    Console.WriteLine("9 - Сохранить в расписание в файл");
                 }
-                Console.WriteLine("8 - Загрузить расписание из файла");
-                Console.WriteLine("9 - Выход");
+                Console.WriteLine("10 - Загрузить расписание из файла");
+                Console.WriteLine("11 - Выход");
                 Console.Write("Ваш выбор: ");
                 try
                 {
@@ -45,6 +72,7 @@ namespace Scheduler
                             }
                         case 2:
                             {
+                                if (!CheckTasksExist(schedule)) { return; } ;
                                 Console.Clear();
                                 Console.Write("Введите название удаляемой задачи: ");
                                 string nameTask = Console.ReadLine();
@@ -54,6 +82,7 @@ namespace Scheduler
                             }
                         case 3:
                             {
+                                if (!CheckTasksExist(schedule)) { break; };
                                 Console.Clear();
                                 Console.Write("Введите название редактируемой задачи: ");
                                 string nameTask = Console.ReadLine();
@@ -66,42 +95,74 @@ namespace Scheduler
                                 break;
                             }
                         case 4:
+                        case 5:
+                        case 6:
                             {
+                                if (!CheckTasksExist(schedule)) { break; };
+                                switch (keyCode)
+                                {
+                                    case 5:
+                                        {
+                                            schedule.SortTasksByCreationDate();
+                                            break;
+                                        }
+                                    case 6:
+                                        {
+                                            schedule.SortTasksByCompletionDate();
+                                            break;
+                                        }
+                                }
                                 Console.Clear();
                                 Console.WriteLine(schedule.PrintTasksList());
-                                Console.Write("Нажмите любую клавишу для продолжения ...");
-                                Console.ReadKey();
-                                Console.Clear();
                                 break;
                             }
-                        case 5:
+                        case 7:
                             {
+                                if (!CheckTasksExist(schedule)) { break; };
                                 Console.Clear();
-                                schedule.SortTasksByCreationDate();
-                                Console.WriteLine(schedule.PrintTasksList());
-                                Console.Write("Нажмите любую клавишу для продолжения ...");
-                                Console.ReadKey();
+                                Console.WriteLine(schedule.PrintCurrentTasks());
+                                break;
+                            }
+                        case 8:
+                            {
+                                if (!CheckTasksExist(schedule)) { break; };
                                 Console.Clear();
+                                Console.WriteLine(schedule.PrintOverdueTasks());
+                                break;
+                            }
+                        case 9:
+                            {
+                                if (!CheckTasksExist(schedule)) { break; };
+                                Console.Clear();
+                                string path = "Schedule.bin";
+                                FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write);
+                                BinaryFormatter bformatter = new BinaryFormatter();
+                                bformatter.Serialize(fileStream, schedule);
+                                fileStream.Close();
+                                Console.WriteLine("Расписание было успешно сохранено в файл Schedule.bin в папке с .exe");
+                                break;
+                            }
+                        case 10:
+                            {
                                 break;
                             }
 
-                        case 9: return;
+                        case 11: return;
 
                         default:
                             {
                                 Console.WriteLine("Вы ввели неверный код !");
-                                Thread.Sleep(2500);
-                                Console.Clear();
                                 break;
                             }
                     }
                 } catch (FormatException fe)
                 {
                     Console.WriteLine(fe.Message);
-                    Thread.Sleep(2500);
-                    Console.Clear();
                 }
+                WaitInteraction();
             }
         }
+
+        
     }
 }

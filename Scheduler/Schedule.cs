@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Scheduler
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    [Serializable]
     class Schedule
     {
         public List<Task> Tasks { get; set; }
@@ -55,17 +59,44 @@ namespace Scheduler
 
         public void SortTasksByCreationDate()
         {
-            
+            Tasks.Sort((a, b) => a.CreationDate.CompareTo(b.CreationDate));
         }
 
         public void SortTasksByCompletionDate()
         {
+            Tasks.Sort((a, b) => a.CompletionDate.CompareTo(b.CompletionDate));
+        }
 
+        public string PrintCurrentTasks()
+        {
+            string currentTasks = "";
+            foreach (Task task in Tasks)
+            {
+                if (task.CompletionDate > DateTime.Now)
+                {
+                    currentTasks += task.ToString() + "\n";
+                }
+            }
+            return currentTasks;
+        }
+
+        public string PrintOverdueTasks()
+        {
+            string overdueTasks = "";
+            foreach (Task task in Tasks)
+            {
+                if (task.CompletionDate <= DateTime.Now)
+                {
+                    overdueTasks += task.ToString() + "\n";
+                }
+            }
+            return overdueTasks;
         }
 
         public string PrintTasksList()
         {
             return Tasks.Aggregate("", (current, item) => current + item.ToString() + "\n");
         }
+
     }
 }
