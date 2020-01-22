@@ -10,9 +10,6 @@ using System.Threading;
 
 namespace Scheduler
 {
-    /// <summary>
-    /// 
-    /// </summary>
     class Program
     {
         static Schedule schedule = new Schedule();
@@ -22,7 +19,6 @@ namespace Scheduler
             if (schedule.Tasks.Count == 0)
             {
                 Console.WriteLine("Такой команды нет !");
-                WaitInteraction();
                 return false;
             }
             return true;
@@ -72,7 +68,7 @@ namespace Scheduler
                             }
                         case 2:
                             {
-                                if (!CheckTasksExist(schedule)) { return; } ;
+                                if (!CheckTasksExist(schedule)) { break; } ;
                                 Console.Clear();
                                 Console.Write("Введите название удаляемой задачи: ");
                                 string nameTask = Console.ReadLine();
@@ -144,6 +140,22 @@ namespace Scheduler
                             }
                         case 10:
                             {
+                                Console.Clear();
+                                string path = "Schedule.bin";
+                                try
+                                {
+                                    FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+                                    BinaryFormatter formatter = new BinaryFormatter();
+                                    schedule = (Schedule)formatter.Deserialize(fileStream);
+                                    fileStream.Close();
+                                    Console.WriteLine("Рассписание загружено из файла Schedule.bin из папки с .exe");
+                                    schedule.PrintTasksList();
+                                } catch (FileNotFoundException fnfe)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine(fnfe.Message);
+                                    Console.WriteLine("Отсутствует файл с сохранёнными записями !");
+                                }
                                 break;
                             }
 
@@ -161,8 +173,6 @@ namespace Scheduler
                 }
                 WaitInteraction();
             }
-        }
-
-        
+        } 
     }
 }

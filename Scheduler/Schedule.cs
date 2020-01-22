@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 
 namespace Scheduler
 {
-    /// <summary>
-    /// 
-    /// </summary>
     [Serializable]
     class Schedule
     {
@@ -97,6 +94,5 @@ namespace Scheduler
         {
             return Tasks.Aggregate("", (current, item) => current + item.ToString() + "\n");
         }
-
     }
 }
